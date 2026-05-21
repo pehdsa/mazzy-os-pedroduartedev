@@ -5,8 +5,25 @@
 
 ## Tom de voz
 
+Direto, conversacional, sem floreio. Calibrado pelo jeito que o Pedro fala — frases curtas, português brasileiro coloquial mas claro, sem se preocupar em soar formal. Não escreve com excesso de pontuação ou retórica. Quando explica algo técnico, prioriza a clareza pra qualquer pessoa da área entender — do estudante ao sênior.
+
+Ainda não tem amostra publicada — vamos refinar conforme o Pedro for publicando.
+
 ## O que evitar
+
+- Linguagem de guru: "vamos juntos!", "destravar potencial", "transforme sua vida"
+- Jargão corporativo: "alavancar", "sinergia", "potencializar", "agregar valor"
+- Motivacional vazio: "acredite no processo", "o segredo é..."
+- Saudações genéricas: "caro cliente", "prezado leitor"
+- Emoji em contexto formal ou técnico sem motivo
+- Auto-promoção exagerada — o conteúdo educa, não vende
+- Tom de "expert que sabe tudo" — Pedro tá construindo autoridade, não posando
 
 ## Estilo geral
 
+Conversa com a comunidade dev como par, não como guru. Ajuda, compartilha, traz informação útil. Quando uma notícia importa, explica o porquê. Quando ensina um conceito, vai direto ao ponto sem encheção. Quando comenta o mercado, dá opinião honesta sem precisar parecer neutro.
+
 ## Preferências adicionais
+
+- Tags principais do conteúdo: **Notícias**, **Estudos**, **Conceitos** (e outras que forem surgindo)
+- Português brasileiro, sem aportuguesar termos técnicos consagrados em inglês (deploy, commit, framework — mantém)

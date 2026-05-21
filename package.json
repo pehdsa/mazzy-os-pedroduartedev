@@ -1,0 +1,23 @@
+{
+  "name": "mazyos",
+  "version": "1.0.0",
+  "description": "> O sistema operacional do seu negócio dentro do Claude Code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pehdsa/mazzy-os-pedroduartedev.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pehdsa/mazzy-os-pedroduartedev/issues"
+  },
+  "homepage": "https://github.com/pehdsa/mazzy-os-pedroduartedev#readme",
+  "dependencies": {
+    "playwright": "^1.60.0"
+  }
+}
