@@ -116,3 +116,15 @@ Toda peça de conteúdo (carrossel, post, header de blog, badge) carrega uma das
 - **Post de blog:** badge antes do título + cor da tag como accent no header
 - **Slide divisor (quando o tema mistura tags):** usar a tag dominante; tags secundárias viram subtexto
 - **Card de tag (listagem do blog):** ícone + nome + cor de borda na variante 55 alpha
+
+---
+
+## Carrosséis com código (lições aprendidas)
+
+Pra slides que mostram trechos de código, considerar:
+
+- **Formato 1:1 (quadrado, 1080x1080)** funciona melhor que 4:5 — código fica mais legível no celular, sem rolagem vertical comprimindo as linhas
+- **Font-size do código:** mínimo 22-24px no canvas 1080x1080 pra leitura confortável no feed mobile
+- **Limitar linhas por slide:** máximo ~10 linhas curtas ou ~6 linhas longas. Se o exemplo é maior, quebra em 2 slides
+- **Conteúdo de texto explicativo:** dar espaço maior pro título + subtítulo + 1-2 frases de contexto além do código (não só "Faça isso" / "Não faça aquilo")
+- **Alternar:** intercalar slides de código com slides de texto puro (regra + dica) pra evitar fadiga visual
