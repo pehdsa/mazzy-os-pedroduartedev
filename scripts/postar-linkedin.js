@@ -72,18 +72,41 @@ async function uploadImage(filePath, index, total) {
   if (!USER_URN) die('LINKEDIN_USER_URN não definido no .env');
 
   if (!fs.existsSync(pasta)) die(`pasta não existe: ${pasta}`);
-  const instaDir = path.join(pasta, 'instagram');
-  if (!fs.existsSync(instaDir)) die(`subpasta instagram/ não existe em ${pasta}`);
 
-  const slides = fs.readdirSync(instaDir)
+  // Prefere pasta linkedin/ (slides 1:1 específicos) se existir, senão usa instagram/
+  const linkedinDir = path.join(pasta, 'linkedin');
+  const instaDir = path.join(pasta, 'instagram');
+  let slidesDir;
+  if (fs.existsSync(linkedinDir)) {
+    slidesDir = linkedinDir;
+    console.log('▶ usando slides específicos do LinkedIn (linkedin/)');
+  } else if (fs.existsSync(instaDir)) {
+    slidesDir = instaDir;
+    console.log('▶ usando slides do Instagram como fallback (instagram/)');
+  } else {
+    die(`nem linkedin/ nem instagram/ existem em ${pasta}`);
+  }
+
+  const slides = fs.readdirSync(slidesDir)
     .filter(f => /^slide-\d+\.png$/.test(f))
     .sort();
   if (slides.length < 1) die('nenhum slide encontrado');
   if (slides.length > 9) die(`LinkedIn aceita no máximo 9 imagens, achei ${slides.length}`);
   console.log(`▶ ${slides.length} slides`);
 
-  const legendaPath = path.join(pasta, 'legenda.md');
-  if (!fs.existsSync(legendaPath)) die(`legenda.md não existe em ${pasta}`);
+  // Prefere legenda-linkedin.md, senão usa legenda.md
+  const legendaLinkedinPath = path.join(pasta, 'legenda-linkedin.md');
+  const legendaGenericPath = path.join(pasta, 'legenda.md');
+  let legendaPath;
+  if (fs.existsSync(legendaLinkedinPath)) {
+    legendaPath = legendaLinkedinPath;
+    console.log('▶ usando legenda específica do LinkedIn (legenda-linkedin.md)');
+  } else if (fs.existsSync(legendaGenericPath)) {
+    legendaPath = legendaGenericPath;
+    console.log('▶ usando legenda do Instagram como fallback (legenda.md)');
+  } else {
+    die(`nem legenda-linkedin.md nem legenda.md existem em ${pasta}`);
+  }
   // tira o título Markdown da primeira linha + trim
   const legenda = fs.readFileSync(legendaPath, 'utf8').replace(/^#.*\n+/, '').trim();
   if (legenda.length > 3000) {
@@ -95,7 +118,7 @@ async function uploadImage(filePath, index, total) {
   console.log('▶ enviando imagens…');
   const imageUrns = [];
   for (let i = 0; i < slides.length; i++) {
-    const urn = await uploadImage(path.join(instaDir, slides[i]), i, slides.length);
+    const urn = await uploadImage(path.join(slidesDir, slides[i]), i, slides.length);
     imageUrns.push(urn);
   }
 

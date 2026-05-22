@@ -128,3 +128,50 @@ Pra slides que mostram trechos de código, considerar:
 - **Limitar linhas por slide:** máximo ~10 linhas curtas ou ~6 linhas longas. Se o exemplo é maior, quebra em 2 slides
 - **Conteúdo de texto explicativo:** dar espaço maior pro título + subtítulo + 1-2 frases de contexto além do código (não só "Faça isso" / "Não faça aquilo")
 - **Alternar:** intercalar slides de código com slides de texto puro (regra + dica) pra evitar fadiga visual
+
+---
+
+## Variantes por plataforma
+
+Cada plataforma tem versão própria — **NÃO reaproveitar o mesmo asset**.
+
+### Pasta padrão por carrossel
+
+```
+marketing/conteudo/<slug>-<data>/
+  instagram/slide-XX.png        ← 1080x1350 (4:5) — feed do Insta
+  linkedin/slide-XX.png         ← 1080x1080 (1:1) — feed do LinkedIn
+  story.png                     ← 1080x1920 (9:16) — story do Insta
+  legenda.md                    ← legenda Insta (coloquial, hashtags 10-15)
+  legenda-linkedin.md           ← legenda LinkedIn (analítica, hashtags 3-5)
+  carrossel.html                ← gera as instagram/
+  carrossel-linkedin.html       ← gera as linkedin/ (mesmo conteúdo, layout 1:1)
+  render.js / render-linkedin.js
+```
+
+### Diferenças visuais Insta vs LinkedIn
+
+| | Instagram | LinkedIn |
+|---|---|---|
+| Formato | 1080x1350 (4:5) | 1080x1080 (1:1) |
+| Conteúdo dos slides | Igual | Igual |
+| Padrão visual | Mesma identidade (paleta, fontes, badge da tag) | Mesma identidade |
+| Densidade de texto | Pode ser menos denso | Pode ser mais denso (público dev pro lê mais) |
+| Hashtags no carrossel | Não | Não |
+
+### Diferenças de legenda
+
+| | Instagram | LinkedIn |
+|---|---|---|
+| Tamanho | 200-1000 chars | 800-3000 chars (usar bem o espaço) |
+| Tom | Direto, coloquial | Profissional, analítico |
+| Hook | Frase de impacto curta | Insight + contexto |
+| CTA | "Salva esse post", "Me conta nos comentários" | Pergunta aberta pra debate |
+| Hashtags | 10-15 mix (público + nicho) | 3-5 industry-focused |
+| Emoji | Pode (no hook, no CTA) | Mínimo, idealmente zero |
+
+### Pipeline de scripts
+
+- `postar-instagram.js` → lê `instagram/` + `legenda.md`
+- `postar-linkedin.js` → prefere `linkedin/` + `legenda-linkedin.md`, se não existirem cai pra `instagram/` + `legenda.md`
+- `postar-story.js` → lê `story.png`

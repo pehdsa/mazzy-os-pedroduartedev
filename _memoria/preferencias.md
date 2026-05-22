@@ -27,3 +27,26 @@ Conversa com a comunidade dev como par, não como guru. Ajuda, compartilha, traz
 
 - Tags principais do conteúdo: **Notícias**, **Estudos**, **Conceitos** (e outras que forem surgindo)
 - Português brasileiro, sem aportuguesar termos técnicos consagrados em inglês (deploy, commit, framework — mantém)
+
+## Conteúdo cross-platform
+
+Cada plataforma tem versões próprias — **não reaproveitar o mesmo asset/legenda**.
+
+### Instagram
+- Carrossel 4:5 (1080x1350) — formato padrão Insta
+- Legenda mais coloquial e direta
+- Hashtags variadas (10-15, mix de público + nicho)
+- CTA tipo "salva esse post", "me conta nos comentários"
+- Story 9:16 (1080x1920) como divulgação adicional
+
+### LinkedIn
+- Carrossel 1:1 (1080x1080 quadrado) — formato preferido na plataforma, mais legibilidade no feed mobile
+- Legenda **mais longa e analítica** (até 3000 chars, usar bem o espaço)
+- Tom mais profissional e thought leadership — não casual demais
+- Estrutura típica: gancho com insight forte → contexto técnico → análise/implicação → pergunta pra discussão
+- Sem "salva esse post" ou linguagem de Insta — LinkedIn premia opinião embasada e debate
+- Hashtags 3-5 (não 15), industry-focused (#softwareengineering, #devops, #cybersecurity — não #devbr ou genéricas)
+
+### Blog
+- Versão longa e indexável, com seções e exemplos completos
+- Pode reusar o tema do post mas expandido
