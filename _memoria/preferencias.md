@@ -28,6 +28,18 @@ Conversa com a comunidade dev como par, não como guru. Ajuda, compartilha, traz
 - Tags principais do conteúdo: **Notícias**, **Estudos**, **Conceitos** (e outras que forem surgindo)
 - Português brasileiro, sem aportuguesar termos técnicos consagrados em inglês (deploy, commit, framework — mantém)
 
+## Workflow obrigatório pra legendas
+
+**Toda legenda (Insta, LinkedIn, blog) passa pela skill `humanizer-main` antes de salvar.**
+
+Ordem do fluxo:
+1. Rascunhar a legenda no tom da marca (direto, conversacional)
+2. **Rodar pelo `humanizer-main`** pra tirar marcas típicas de IA (em-dash em excesso, regra de três, voz passiva, vocabulário "ChatGPT", paralelismos negativos, palavras-filler)
+3. Revisar o output do humanizer — ajustar pontuação ou voz se ficar estranho
+4. Aí sim salvar em `legenda.md` ou `legenda-linkedin.md`
+
+Vale tanto pra rascunhos novos quanto pra ajustes de legendas existentes.
+
 ## Conteúdo cross-platform
 
 Cada plataforma tem versões próprias — **não reaproveitar o mesmo asset/legenda**.
