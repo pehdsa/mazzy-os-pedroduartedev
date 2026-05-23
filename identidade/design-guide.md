@@ -150,6 +150,26 @@ Comparado ao baseline de 1:1 (que estava ótimo no SDD com IA antes da troca):
 
 Se ao montar o slide sobrar mais de ~20% de espaço vazio antes do footer, **aumenta o conteúdo** (fontes, padding, mais cards) em vez de centralizar com flex. Centralizar disfarça o problema; aumentar resolve.
 
+### Se o conteúdo de texto não dá pra encorpar mais
+
+Quando aumentar fonte e padding já está no limite mas ainda sobra espaço, adiciona **elementos visuais que contextualizam**. Não enche linguiça com decoração genérica. Cada elemento extra precisa **dizer algo**.
+
+Catálogo de elementos por situação:
+
+| Situação | Elemento sugerido |
+|---|---|
+| Conceito abstrato (SDD, REST, OAuth) | Diagrama de fluxo (boxes + setas), tipo SPEC → IA → CÓDIGO |
+| Comparativo (X vs Y) | 2 colunas lado a lado com bullets |
+| Sequência de passos | Cards numerados verticais (já é o padrão) |
+| Decisão técnica / opinião | Card "stamp" rotacionado com a frase-chave |
+| Métricas / dados | Barra de progresso, contadores grandes, % visual |
+| Notícia com fonte | Card de quote com aspas grandes e atribuição |
+| Conceito + exemplo | Bloco de código pequeno ao lado do texto |
+| Arquitetura / camadas | Stack de retângulos rotulados |
+| Antes vs depois (UX, código, refactor) | 2 mini-snapshots lado a lado, separador em linha |
+
+Princípio: o elemento visual **complementa o entendimento**, não enche o canvas. Se o slide ficar mais claro com a adição, vale. Se for só "ocupar espaço bonito", melhor reduzir o slide.
+
 ---
 
 ## Carrosséis com código (lições aprendidas)
