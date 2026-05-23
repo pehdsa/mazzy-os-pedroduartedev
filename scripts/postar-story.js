@@ -61,17 +61,28 @@ async function urlReachable(url) {
   console.log(`  ✓ container ${container.id}`);
 
   // 2. Aguardar processamento
+  // Workaround: Meta às vezes retorna Authorization Error no polling do
+  // status do container. Ignora e dá um sleep generoso.
   console.log('▶ aguardando processamento…');
+  let pollFailed = false;
   for (let i = 0; i < 30; i++) {
     await new Promise(r => setTimeout(r, 2000));
-    const status = await api(`/${container.id}`, {
-      fields: 'status_code',
-      access_token: META_PAGE_ACCESS_TOKEN,
-    });
-    if (status.status_code === 'FINISHED') break;
-    if (status.status_code === 'ERROR') die('Meta retornou ERROR no processamento');
-    if (i === 29) die('timeout aguardando FINISHED');
-    process.stdout.write('.');
+    try {
+      const status = await api(`/${container.id}`, {
+        fields: 'status_code',
+        access_token: META_PAGE_ACCESS_TOKEN,
+      });
+      if (status.status_code === 'FINISHED') break;
+      if (status.status_code === 'ERROR') die('Meta retornou ERROR no processamento');
+      if (i === 29) die('timeout aguardando FINISHED');
+      process.stdout.write('.');
+    } catch (e) {
+      if (!pollFailed) {
+        console.log(`\n  (polling falhou: ${e.message.slice(0, 80)}... seguindo mesmo assim)`);
+        pollFailed = true;
+      }
+      if (i >= 5) break;
+    }
   }
   console.log(' pronto');
 
