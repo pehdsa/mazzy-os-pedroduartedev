@@ -133,12 +133,21 @@ async function urlReachable(url) {
     access_token: META_PAGE_ACCESS_TOKEN,
   }, 'POST');
 
-  // 7. Pegar permalink
-  const detail = await api(`/${publish.id}`, {
-    fields: 'permalink',
-    access_token: META_PAGE_ACCESS_TOKEN,
-  });
+  // 7. Tentar pegar permalink (não bloqueia se falhar — Meta às vezes
+  //    retorna Insufficient permissions nesse endpoint mesmo após publish OK)
+  let permalink = null;
+  try {
+    const detail = await api(`/${publish.id}`, {
+      fields: 'permalink',
+      access_token: META_PAGE_ACCESS_TOKEN,
+    });
+    permalink = detail.permalink;
+  } catch (e) {
+    // ignora — post já tá publicado
+  }
 
-  console.log(`\n✓ publicado: ${detail.permalink}`);
+  console.log(`\n✓ publicado`);
   console.log(`  post id: ${publish.id}`);
+  if (permalink) console.log(`  link: ${permalink}`);
+  else console.log(`  link: confira em https://www.instagram.com/`);
 })().catch(e => die(e.message));
