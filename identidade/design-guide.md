@@ -119,6 +119,39 @@ Toda peça de conteúdo (carrossel, post, header de blog, badge) carrega uma das
 
 ---
 
+## Dimensionar conteúdo pelo formato (4:5 vs 1:1)
+
+**Erro comum:** desenhar pra 1:1 e depois esticar pra 4:5. Resultado: muito espaço vazio embaixo.
+
+**Regra:** quando o formato é **4:5 (1080x1350)**, todo o conteúdo precisa crescer junto pra preencher o canvas. Não é só "esticar a altura".
+
+### Ajustes recomendados pra 4:5
+
+Comparado ao baseline de 1:1 (que estava ótimo no SDD com IA antes da troca):
+
+| Elemento | 1:1 (1080x1080) | 4:5 (1080x1350) |
+|---|---|---|
+| Padding lateral | 70-80px | 80-100px |
+| Título de conteúdo (h2) | 60px | 68-72px |
+| Body text | 22-24px | 26-30px |
+| Card title | 26-28px | 30-34px |
+| Card subtitle | 18-19px | 21-23px |
+| Card padding interno | 22-26px | 28-32px |
+| Gap entre cards | 14-16px | 18-22px |
+| Highlight box padding | 22px | 28px |
+| Code block font | 22-24px | 26-28px |
+
+### Conteúdo por slide
+
+- 1:1: 3-5 itens ou 1 bloco grande
+- 4:5: **4-6 itens** ou 1 bloco grande + texto explicativo. Aproveita o espaço extra com mais substância, não com gap.
+
+### Quando dúvida
+
+Se ao montar o slide sobrar mais de ~20% de espaço vazio antes do footer, **aumenta o conteúdo** (fontes, padding, mais cards) em vez de centralizar com flex. Centralizar disfarça o problema; aumentar resolve.
+
+---
+
 ## Carrosséis com código (lições aprendidas)
 
 Pra slides que mostram trechos de código, considerar:
