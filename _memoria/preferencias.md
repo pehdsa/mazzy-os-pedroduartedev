@@ -16,8 +16,9 @@ Ainda não tem amostra publicada — vamos refinar conforme o Pedro for publican
 - Motivacional vazio: "acredite no processo", "o segredo é..."
 - Saudações genéricas: "caro cliente", "prezado leitor"
 - Emoji em contexto formal ou técnico sem motivo
-- Auto-promoção exagerada — o conteúdo educa, não vende
-- Tom de "expert que sabe tudo" — Pedro tá construindo autoridade, não posando
+- Auto-promoção exagerada. O conteúdo educa, não vende.
+- Tom de "expert que sabe tudo". Pedro tá construindo autoridade, não posando.
+- **Em-dash (`—`) em textos**: é padrão típico de IA. Usar dois pontos (`:`), ponto final (`.`), vírgula (`,`) ou parênteses no lugar. Vale pra slides, legendas, blog e qualquer output público.
 
 ## Estilo geral
 
@@ -27,6 +28,17 @@ Conversa com a comunidade dev como par, não como guru. Ajuda, compartilha, traz
 
 - Tags principais do conteúdo: **Notícias**, **Estudos**, **Conceitos** (e outras que forem surgindo)
 - Português brasileiro, sem aportuguesar termos técnicos consagrados em inglês (deploy, commit, framework — mantém)
+
+## Publicação — confirmação humana obrigatória
+
+**Nunca postar em redes sociais sem perguntar antes**, mesmo que tenha aprovação anterior dos visuais ou das legendas.
+
+Antes de rodar `postar-instagram.js`, `postar-linkedin.js`, `postar-facebook.js`, `postar-story.js` ou qualquer publicação automática, **sempre** mostrar:
+- Plataforma (Insta / LinkedIn / FB / Story)
+- Slug ou nome do conteúdo
+- Confirmação explícita: "Posso postar agora?"
+
+Só rodar depois de "sim", "pode", "manda", etc. Confirmação tem que ser pra essa publicação específica, não vale aprovação genérica anterior.
 
 ## Workflow obrigatório pra legendas
 
