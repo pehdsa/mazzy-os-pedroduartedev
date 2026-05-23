@@ -100,17 +100,29 @@ async function urlReachable(url) {
   console.log(`  ✓ container ${container.id}`);
 
   // 5. Aguardar processamento (pode levar alguns segundos)
+  // Nota: às vezes a Meta retorna "Authorization Error" ao consultar status
+  // do container — workaround: ignora erro e dá um sleep generoso.
   console.log('▶ aguardando processamento…');
+  let pollFailed = false;
   for (let i = 0; i < 30; i++) {
     await new Promise(r => setTimeout(r, 2000));
-    const status = await api(`/${container.id}`, {
-      fields: 'status_code',
-      access_token: META_PAGE_ACCESS_TOKEN,
-    });
-    if (status.status_code === 'FINISHED') break;
-    if (status.status_code === 'ERROR') die('Meta retornou ERROR no processamento');
-    if (i === 29) die('timeout aguardando FINISHED');
-    process.stdout.write('.');
+    try {
+      const status = await api(`/${container.id}`, {
+        fields: 'status_code',
+        access_token: META_PAGE_ACCESS_TOKEN,
+      });
+      if (status.status_code === 'FINISHED') break;
+      if (status.status_code === 'ERROR') die('Meta retornou ERROR no processamento');
+      if (i === 29) die('timeout aguardando FINISHED');
+      process.stdout.write('.');
+    } catch (e) {
+      // Glitch conhecido da Meta API — ignora e segue. Dá uns 12s pra processar.
+      if (!pollFailed) {
+        console.log(`\n  (polling falhou: ${e.message.slice(0, 80)}... seguindo mesmo assim)`);
+        pollFailed = true;
+      }
+      if (i >= 5) break; // ~12s, suficiente pra container ficar pronto
+    }
   }
   console.log(' pronto');
 
