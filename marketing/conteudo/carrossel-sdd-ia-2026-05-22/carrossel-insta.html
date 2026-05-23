@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>SDD com IA — Spec-Driven Development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #06060A; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  /* ============ Slide base 4:5 (Insta) ============ */
+  .slide {
+    width: 1080px;
+    height: 1350px;
+    background: radial-gradient(900px 800px at 0% 0%, rgba(236,72,153,0.22), transparent 65%),
+                radial-gradient(900px 800px at 100% 100%, rgba(139,92,246,0.18), transparent 65%),
+                #0A0F11;
+    border: 1px solid #1E2A2E;
+    padding: 80px;
+    color: #FAFAFA;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Pra slides 4:5 — empurra o conteúdo principal pro centro vertical */
+  .slide-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  /* Overlay sutil tipo scan */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 0%, #FFFFFF 50%, transparent 100%);
+    opacity: 0.05;
+    pointer-events: none;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* ============ Header ============ */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(236, 72, 153, 0.13);
+    border: 1px solid rgba(236, 72, 153, 0.42);
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #F9A8D4;
+    text-transform: uppercase;
+  }
+  .badge svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .counter {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: #71717A;
+  }
+
+  /* ============ Footer ============ */
+  .footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer .logo {
+    height: 34px;
+    width: auto;
+  }
+  .footer-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .footer-cta svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ============ Slide 1 — Capa ============ */
+  .capa-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 70px;
+  }
+  .capa-hero { display: flex; flex-direction: column; }
+  .capa .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #F9A8D4;
+    text-transform: uppercase;
+  }
+  .capa .main-title {
+    margin-top: 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 132px;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -4.5px;
+    color: #FAFAFA;
+    white-space: nowrap;
+  }
+  .capa .main-title em {
+    color: #F9A8D4;
+    font-style: normal;
+  }
+  .capa .divider {
+    margin-top: 30px;
+    height: 4px;
+    width: 96px;
+    background: #EC4899;
+    border-radius: 2px;
+  }
+  .capa .subtitle {
+    margin-top: 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 34px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #D4D4D8;
+    max-width: 820px;
+  }
+
+  /* Diagrama visual SPEC → IA → CÓDIGO */
+  .capa-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .flow-box {
+    flex: 1;
+    padding: 26px 20px;
+    border-radius: 16px;
+    background: rgba(236, 72, 153, 0.06);
+    border: 1px solid rgba(236, 72, 153, 0.28);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .flow-box svg {
+    width: 56px;
+    height: 56px;
+    color: #F9A8D4;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .flow-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #FAFAFA;
+    letter-spacing: -0.5px;
+  }
+  .flow-sub {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #71717A;
+    text-transform: uppercase;
+  }
+  .flow-arrow {
+    color: #EC4899;
+    font-size: 36px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* ============ Conteúdo padrão (slides 2-7) ============ */
+  .content-eyebrow {
+    margin-top: 40px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #F9A8D4;
+    text-transform: uppercase;
+  }
+  .content-title {
+    margin-top: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 60px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: #FAFAFA;
+    max-width: 920px;
+  }
+  .content-divider {
+    margin-top: 22px;
+    height: 4px;
+    width: 64px;
+    background: #EC4899;
+    border-radius: 2px;
+  }
+  .content-body {
+    margin-top: 30px;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #D4D4D8;
+    max-width: 920px;
+  }
+  .content-body code {
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    color: #F9A8D4;
+    background: rgba(236, 72, 153, 0.10);
+    border: 1px solid rgba(236, 72, 153, 0.30);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* Highlight box */
+  .highlight-box {
+    margin-top: 28px;
+    padding: 22px 24px;
+    border-radius: 14px;
+    background: rgba(236, 72, 153, 0.07);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #F9A8D4;
+    max-width: 920px;
+  }
+
+  /* Slide 2 — colunas Você descreve | IA gera */
+  .s2-columns {
+    margin-top: 36px;
+    display: flex;
+    gap: 18px;
+    width: 100%;
+  }
+  .s2-col {
+    flex: 1;
+    padding: 28px 26px;
+    border-radius: 16px;
+    background: rgba(236, 72, 153, 0.05);
+    border: 1px solid rgba(236, 72, 153, 0.22);
+  }
+  .s2-col-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #F9A8D4;
+    text-transform: uppercase;
+  }
+  .s2-col-items {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .s2-col-item {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #FAFAFA;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .s2-col-item::before {
+    content: '';
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #EC4899;
+  }
+
+  /* Slide 3 — cards com título + explicação */
+  .s3-cards {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .s3-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    padding: 24px 26px;
+    border-radius: 16px;
+    background: rgba(236, 72, 153, 0.05);
+    border: 1px solid rgba(236, 72, 153, 0.22);
+  }
+  .s3-num {
+    flex-shrink: 0;
+    width: 62px;
+    height: 62px;
+    border-radius: 12px;
+    background: rgba(236, 72, 153, 0.16);
+    border: 1px solid rgba(236, 72, 153, 0.36);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: #F9A8D4;
+  }
+  .s3-body { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
+  .s3-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #FAFAFA;
+    line-height: 1.2;
+  }
+  .s3-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: #A1A1AA;
+    line-height: 1.4;
+  }
+  .s3-desc code {
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    color: #F9A8D4;
+    background: rgba(236, 72, 153, 0.10);
+    border: 1px solid rgba(236, 72, 153, 0.22);
+    padding: 1px 6px;
+    border-radius: 5px;
+  }
+
+  /* ============ Lista numerada (slides 3 e 4) ============ */
+  .num-list {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 940px;
+  }
+  .num-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+  }
+  .num-box {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(236, 72, 153, 0.15);
+    border: 1px solid rgba(236, 72, 153, 0.36);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #F9A8D4;
+  }
+  .num-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #FAFAFA;
+    padding-top: 8px;
+  }
+  .num-text em {
+    color: #F9A8D4;
+    font-style: normal;
+  }
+  .num-text code {
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px;
+    color: #F9A8D4;
+    background: rgba(236, 72, 153, 0.10);
+    border: 1px solid rgba(236, 72, 153, 0.25);
+    padding: 1px 7px;
+    border-radius: 5px;
+  }
+
+  /* ============ Slide 5 — Código ============ */
+  .code-block {
+    margin-top: 36px;
+    background: #06060A;
+    border: 1px solid rgba(236, 72, 153, 0.30);
+    border-radius: 14px;
+    padding: 40px 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    line-height: 1.6;
+    color: #E5E7EB;
+    white-space: pre-wrap;
+    width: 100%;
+  }
+  .code-block .c-bad-header { color: #EF4444; font-weight: 700; }
+  .code-block .c-good-header { color: #10B981; font-weight: 700; }
+  .code-block .c-string { color: #FCD34D; }
+  .code-block .c-key { color: #F9A8D4; font-weight: 600; }
+  .code-block .c-dim { color: #71717A; }
+
+  /* ============ Slide 6 — Ferramentas ============ */
+  .tools-list {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .tool-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px 24px;
+    border-radius: 14px;
+    background: rgba(236, 72, 153, 0.05);
+    border: 1px solid rgba(236, 72, 153, 0.20);
+  }
+  .tool-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #FAFAFA;
+    letter-spacing: -0.4px;
+  }
+  .tool-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #A1A1AA;
+    line-height: 1.35;
+  }
+  .tool-desc code {
+    font-family: 'Geist Mono', monospace;
+    font-size: 15px;
+    color: #F9A8D4;
+    background: rgba(236, 72, 153, 0.10);
+    border: 1px solid rgba(236, 72, 153, 0.22);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* ============ Slide 7 — Papel do dev ============ */
+  .dev-question {
+    margin-top: 40px;
+    padding: 24px 28px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #A1A1AA;
+  }
+  .dev-question .q-label {
+    display: block;
+    font-family: 'Geist Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #F9A8D4;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .dev-question .q-text {
+    font-style: italic;
+    color: #D4D4D8;
+    font-size: 26px;
+    line-height: 1.3;
+  }
+  .dev-title {
+    margin-top: 32px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -2px;
+    color: #FAFAFA;
+  }
+  .dev-title em {
+    color: #F9A8D4;
+    font-style: normal;
+  }
+  .dev-body {
+    margin-top: 22px;
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #D4D4D8;
+  }
+  .dev-skills {
+    margin-top: 26px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .skill-pill {
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(236, 72, 153, 0.08);
+    border: 1px solid rgba(236, 72, 153, 0.28);
+    font-family: 'Geist Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #F9A8D4;
+    text-transform: uppercase;
+  }
+  .dev-final {
+    margin-top: 28px;
+    padding: 22px 26px;
+    border-radius: 14px;
+    background: rgba(236, 72, 153, 0.10);
+    border: 1px solid rgba(236, 72, 153, 0.32);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #FAFAFA;
+  }
+  .dev-final em {
+    color: #F9A8D4;
+    font-style: normal;
+  }
+
+  /* ============ Slide 8 — CTA ============ */
+  .cta {
+    background: radial-gradient(ellipse at top right, rgba(236,72,153,0.25), transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(139,92,246,0.14), transparent 55%),
+                #0A0F11;
+  }
+  .cta-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+  }
+  .cta-logo {
+    height: 68px;
+    width: auto;
+  }
+  .cta-bigtext {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 60px;
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -2.2px;
+    color: #FFFFFF;
+    max-width: 820px;
+    margin-top: 4px;
+  }
+  .cta-bigtext .cta-pink {
+    color: #F9A8D4;
+    display: block;
+  }
+  .cta-handle-row {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: rgba(236, 72, 153, 0.10);
+    border: 1px solid rgba(236, 72, 153, 0.42);
+  }
+  .cta-handle {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: #F9A8D4;
+  }
+  .cta-topics-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #71717A;
+    margin-top: 4px;
+  }
+  .cta-topics {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 820px;
+  }
+  .topic-pill {
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #E5E7EB;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================
+     SLIDE 01 — CAPA
+     ========================= -->
+<div class="slide capa">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/>
+        <path d="M22 5h-4"/>
+        <path d="M4 17v2"/>
+        <path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">01 / 08</span>
+  </div>
+
+  <div class="capa-main">
+    <div class="capa-hero">
+      <div class="eyebrow">AI · DEV</div>
+      <div class="main-title">SDD com <em>IA</em></div>
+      <div class="divider"></div>
+      <div class="subtitle">Escreva specs, não só prompts.</div>
+    </div>
+
+    <div class="capa-flow">
+      <div class="flow-box">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+          <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+          <path d="M9 13h6"/>
+          <path d="M9 17h6"/>
+        </svg>
+        <div class="flow-label">Spec</div>
+        <div class="flow-sub">Você escreve</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-box">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+          <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+        </svg>
+        <div class="flow-label">IA</div>
+        <div class="flow-sub">Gera</div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <div class="flow-box">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="m18 16 4-4-4-4"/>
+          <path d="m6 8-4 4 4 4"/>
+          <path d="m14.5 4-5 16"/>
+        </svg>
+        <div class="flow-label">Código</div>
+        <div class="flow-sub">+ testes + doc</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Arrasta pro lado
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 02 — O que é
+     ========================= -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">02 / 08</span>
+  </div>
+
+  <div class="slide-main"><div class="content-eyebrow">Conceito</div>
+  <div class="content-title">Spec-Driven Development</div>
+  <div class="content-divider"></div>
+
+  <div class="s2-columns">
+    <div class="s2-col">
+      <div class="s2-col-label">Você descreve</div>
+      <div class="s2-col-items">
+        <div class="s2-col-item">Comportamento</div>
+        <div class="s2-col-item">Regras de negócio</div>
+        <div class="s2-col-item">Restrições</div>
+        <div class="s2-col-item">Casos de borda</div>
+      </div>
+    </div>
+    <div class="s2-col">
+      <div class="s2-col-label">IA gera</div>
+      <div class="s2-col-items">
+        <div class="s2-col-item">Código</div>
+        <div class="s2-col-item">Testes</div>
+        <div class="s2-col-item">Documentação</div>
+        <div class="s2-col-item">Refatorações</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    A spec vira fonte da verdade. O código pode ser revisado, testado e regenerado.
+  </div></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 03 — Por que muda
+     ========================= -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">03 / 08</span>
+  </div>
+
+  <div class="slide-main"><div class="content-eyebrow">Por quê agora</div>
+  <div class="content-title">O que muda com IA</div>
+  <div class="content-divider"></div>
+
+  <div class="s3-cards">
+    <div class="s3-card">
+      <div class="s3-num">01</div>
+      <div class="s3-body">
+        <div class="s3-title">Contexto estruturado</div>
+        <div class="s3-desc">IA gera melhor quanto mais clara é a entrada. A spec entrega regras e edge cases de forma organizada, em vez de espalhados no prompt.</div>
+      </div>
+    </div>
+    <div class="s3-card">
+      <div class="s3-num">02</div>
+      <div class="s3-body">
+        <div class="s3-title">Uma spec, muitas implementações</div>
+        <div class="s3-desc">A mesma spec gera versões em <code>React</code>, <code>Vue</code>, <code>Swift</code>. Trocou de stack? Você não reescreve a regra, regenera o código.</div>
+      </div>
+    </div>
+    <div class="s3-card">
+      <div class="s3-num">03</div>
+      <div class="s3-body">
+        <div class="s3-title">Mudou a regra? Spec primeiro.</div>
+        <div class="s3-desc">Edita a spec, depois regenera ou ajusta o código. O ponto de partida deixa de ser o arquivo <code>.tsx</code> e passa a ser o <code>.md</code>.</div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 04 — Fluxo
+     ========================= -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">04 / 08</span>
+  </div>
+
+  <div class="slide-main"><div class="content-eyebrow">Fluxo</div>
+  <div class="content-title">Como funciona na prática</div>
+  <div class="content-divider"></div>
+
+  <div class="s3-cards">
+    <div class="s3-card">
+      <div class="s3-num">01</div>
+      <div class="s3-body">
+        <div class="s3-title">Escreve a spec</div>
+        <div class="s3-desc">Em markdown: requisitos, constraints, edge cases. Quanto mais clara, melhor o output.</div>
+      </div>
+    </div>
+    <div class="s3-card">
+      <div class="s3-num">02</div>
+      <div class="s3-body">
+        <div class="s3-title">IA gera código e testes</div>
+        <div class="s3-desc">Implementação completa e a suite de testes saem da mesma spec, em uma rodada.</div>
+      </div>
+    </div>
+    <div class="s3-card">
+      <div class="s3-num">03</div>
+      <div class="s3-body">
+        <div class="s3-title">Revisa o comportamento</div>
+        <div class="s3-desc">Se algo está errado, corrige primeiro a spec. Tratar o código como sintoma, não como fonte.</div>
+      </div>
+    </div>
+    <div class="s3-card">
+      <div class="s3-num">04</div>
+      <div class="s3-body">
+        <div class="s3-title">Regenera ou ajusta</div>
+        <div class="s3-desc">Com a spec atualizada, regenera do zero ou aplica diff localizado. Depende do escopo da mudança.</div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 05 — Exemplo de código
+     ========================= -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">05 / 08</span>
+  </div>
+
+  <div class="slide-main"><div class="content-eyebrow">Comparativo</div>
+  <div class="content-title">Spec ruim vs spec boa</div>
+  <div class="content-divider"></div>
+
+  <div class="code-block"><span class="c-bad-header">❌ Spec ruim</span>
+<span class="c-string">"Faz um formulário de login"</span>
+
+<span class="c-good-header">✅ Spec boa</span>
+- <span class="c-key">Campos:</span> email, senha, "lembrar de mim"
+- <span class="c-key">Validação:</span> email RFC 5322, senha 8+ chars
+- <span class="c-key">Rate limit:</span> 5 tentativas / 15min por IP
+- <span class="c-key">Erro:</span> mensagem genérica <span class="c-dim">(não vazar se email existe)</span>
+- <span class="c-key">Sucesso:</span> redirect /dashboard</div></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 06 — Ferramentas
+     ========================= -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">06 / 08</span>
+  </div>
+
+  <div class="slide-main"><div class="content-eyebrow">Stack</div>
+  <div class="content-title">O que usar</div>
+  <div class="content-divider"></div>
+
+  <div class="tools-list">
+    <div class="tool-row">
+      <div class="tool-name">GitHub Spec Kit</div>
+      <div class="tool-desc">Toolkit do GitHub pra SDD.</div>
+    </div>
+    <div class="tool-row">
+      <div class="tool-name">Claude Code</div>
+      <div class="tool-desc">Specs em markdown como contexto do projeto.</div>
+    </div>
+    <div class="tool-row">
+      <div class="tool-name">Cursor</div>
+      <div class="tool-desc"><code>.cursorrules</code> como spec do projeto.</div>
+    </div>
+    <div class="tool-row">
+      <div class="tool-name">Aider</div>
+      <div class="tool-desc">Terminal-first, com diff control fino.</div>
+    </div>
+    <div class="tool-row">
+      <div class="tool-name">Markdown + LLM</div>
+      <div class="tool-desc">Sem tool específica. Funciona em qualquer modelo.</div>
+    </div>
+  </div></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 07 — Papel do dev
+     ========================= -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">07 / 08</span>
+  </div>
+
+  <div class="slide-main"><div class="content-eyebrow">O papel do dev</div>
+
+  <div class="dev-question">
+    <span class="q-label">Pergunta que sempre aparece</span>
+    <span class="q-text">"Se a IA escreve o código, o que sobra pro dev?"</span>
+  </div>
+
+  <div class="dev-title">O dev não some. <em>Sobe de nível.</em></div>
+
+  <div class="dev-body">
+    Sobra o que sempre foi a parte difícil:
+  </div>
+
+  <div class="dev-skills">
+    <span class="skill-pill">Definir regras</span>
+    <span class="skill-pill">Arquitetura</span>
+    <span class="skill-pill">Trade-offs</span>
+    <span class="skill-pill">Qualidade</span>
+    <span class="skill-pill">Decisões técnicas</span>
+  </div>
+
+  <div class="dev-final">
+    A IA executa. <em>Você dirige.</em>
+  </div></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Final
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     SLIDE 08 — CTA
+     ========================= -->
+<div class="slide cta">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+        <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+      </svg>
+      AI
+    </span>
+    <span class="counter">08 / 08</span>
+  </div>
+
+  <div class="cta-body">
+    <img class="cta-logo" src="./logo.svg" alt="pedroduarte.dev">
+
+    <div class="cta-bigtext">
+      Curtiu o post?
+      <span class="cta-pink">Siga para ver mais.</span>
+    </div>
+
+    <div class="cta-handle-row">
+      <span class="cta-handle">@pedroduarte.dev</span>
+    </div>
+
+    <div class="cta-topics-label">Toda semana sobre</div>
+    <div class="cta-topics">
+      <span class="topic-pill">News</span>
+      <span class="topic-pill">Concepts</span>
+      <span class="topic-pill">Code</span>
+      <span class="topic-pill">Architecture</span>
+      <span class="topic-pill">AI</span>
+      <span class="topic-pill">Career</span>
+      <span class="topic-pill">Tools</span>
+      <span class="topic-pill">DevOps</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
