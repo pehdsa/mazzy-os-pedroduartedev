@@ -12,6 +12,13 @@ const path = require('path');
 const LI_VERSION = '202604';
 const LI_BASE = 'https://api.linkedin.com';
 
+// LinkedIn "Little Text Format" — caracteres reservados precisam de escape.
+// Sem isso, o parser trunca silenciosamente o texto quando encontra um deles.
+// Caracteres: \ ( ) < > [ ] { } @ _ * ~
+function escapeLinkedInText(text) {
+  return text.replace(/[\\()<>\[\]{}@_*~]/g, '\\$&');
+}
+
 let TOKEN, USER_URN;
 
 function die(msg) { console.error('erro: ' + msg); process.exit(1); }
@@ -130,7 +137,7 @@ async function uploadImage(filePath, index, total) {
 
   const postBody = {
     author: USER_URN,
-    commentary: legenda.slice(0, 3000),
+    commentary: escapeLinkedInText(legenda.slice(0, 3000)),
     visibility: 'PUBLIC',
     distribution: {
       feedDistribution: 'MAIN_FEED',

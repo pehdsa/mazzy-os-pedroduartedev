@@ -14,7 +14,7 @@ Visual: 5 letter cards S O L I D
 ## Slide 02 — S
 Letra grande: **S**
 Nome: Single Responsibility (Responsabilidade Única)
-Definição: Uma classe, função ou módulo deve ter um único motivo pra mudar.
+Definição: Uma classe, função ou módulo deve ter uma única responsabilidade.
 Exemplo: Em vez de `Relatorio` faz tudo, separa em: GeradorRelatorio · FormatadorPDF · EnviadorEmail
 
 ## Slide 03 — O
@@ -26,7 +26,7 @@ Exemplo: Em vez de função com vários `if` por tipo de desconto: DescontoClien
 ## Slide 04 — L
 Letra grande: **L**
 Nome: Liskov Substitution (Substituição de Liskov)
-Definição: Classe filha deve substituir a pai sem quebrar comportamento.
+Definição: Uma classe filha deve poder substituir a classe pai sem quebrar o comportamento esperado.
 Exemplo: `Pinguim extends Pato` com `voar()` quebra. O erro está no modelo, não no pinguim.
 
 ## Slide 05 — I
