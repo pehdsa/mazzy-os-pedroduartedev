@@ -1,0 +1,34 @@
+const { chromium } = require('playwright');
+const path = require('path');
+const fs = require('fs');
+
+const HTML_INSTA = `file://${path.resolve(__dirname, 'carrossel-insta.html')}`;
+const HTML_LINKEDIN = `file://${path.resolve(__dirname, 'carrossel-linkedin.html')}`;
+const INSTA_DIR = path.join(__dirname, 'instagram');
+const LINKEDIN_DIR = path.join(__dirname, 'linkedin');
+
+async function renderHtml({ html, width, height, outDir, label }) {
+  const browser = await chromium.launch();
+  const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 2 });
+  const page = await context.newPage();
+  await page.goto(html, { waitUntil: 'networkidle' });
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(600);
+
+  const slides = await page.$$('.slide');
+  console.log(`▶ ${label} (${width}x${height}): ${slides.length} slides`);
+  for (let i = 0; i < slides.length; i++) {
+    const n = String(i + 1).padStart(2, '0');
+    await slides[i].screenshot({ path: path.join(outDir, `slide-${n}.png`), omitBackground: false });
+    console.log(`  ✓ ${path.basename(outDir)}/slide-${n}.png`);
+  }
+  await browser.close();
+}
+
+(async () => {
+  await renderHtml({ html: HTML_INSTA, width: 1080, height: 1350, outDir: INSTA_DIR, label: 'Instagram' });
+  if (fs.existsSync(path.resolve(__dirname, 'carrossel-linkedin.html'))) {
+    await renderHtml({ html: HTML_LINKEDIN, width: 1080, height: 1080, outDir: LINKEDIN_DIR, label: 'LinkedIn' });
+  }
+  console.log('Pronto.');
+})();
