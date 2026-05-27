@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>IA acelera código e vulnerabilidades (Insta 4:5)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #06060A; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    background: radial-gradient(900px 800px at 0% 0%, rgba(236,72,153,0.22), transparent 65%),
+                radial-gradient(900px 800px at 100% 100%, rgba(139,92,246,0.16), transparent 65%),
+                #0A0F11;
+    border: 1px solid #1E2A2E;
+    padding: 70px;
+    color: #FAFAFA;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent, #FFFFFF 50%, transparent);
+    opacity: 0.04; pointer-events: none;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: center; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 11px 20px; border-radius: 999px;
+    background: rgba(236,72,153,0.13);
+    border: 1px solid rgba(236,72,153,0.42);
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px; font-weight: 700; letter-spacing: 2px;
+    color: #F9A8D4; text-transform: uppercase;
+  }
+  .badge svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .counter {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 500; letter-spacing: 1.5px; color: #71717A;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: auto;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer .logo { height: 40px; width: auto; }
+  .footer-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-radius: 999px;
+    background: rgba(255,255,255,0.07); color: #FFF;
+    font-size: 16px; font-weight: 600;
+  }
+  .footer-cta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Capa */
+  .capa { justify-content: flex-start; }
+  .capa-main {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center;
+  }
+  .capa .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 18px; font-weight: 700; letter-spacing: 4px;
+    color: #F9A8D4; text-transform: uppercase;
+  }
+  .capa .main-title {
+    margin-top: 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 74px; font-weight: 900; line-height: 1;
+    letter-spacing: -3.5px; color: #FAFAFA;
+  }
+  .capa .main-title em { color: #F9A8D4; font-style: normal; }
+  .capa .main-title .warn { color: #FBBF24; font-style: normal; }
+  .capa .divider {
+    margin-top: 28px; height: 4px; width: 96px;
+    background: #EC4899; border-radius: 2px;
+  }
+  .capa-flow {
+    margin-top: 56px;
+    display: flex; align-items: stretch; justify-content: center;
+    gap: 18px;
+  }
+  .capa-flow .flow-arrow { display: flex; align-items: center; }
+  .flow-box {
+    flex: 1;
+    padding: 24px 18px;
+    border-radius: 16px;
+    background: rgba(236,72,153,0.06);
+    border: 1px solid rgba(236,72,153,0.28);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .flow-box.warn-box {
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.36);
+  }
+  .flow-box svg {
+    width: 50px; height: 50px;
+    color: #F9A8D4;
+    fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .flow-box.warn-box svg { color: #FBBF24; }
+  .flow-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: #FAFAFA; letter-spacing: -0.5px;
+  }
+  .flow-arrow {
+    color: #EC4899; font-size: 32px; font-weight: 800; flex-shrink: 0;
+  }
+
+  /* Content padrão */
+  .content-eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 18px; font-weight: 700; letter-spacing: 3px;
+    color: #F9A8D4; text-transform: uppercase; margin-top: 40px;
+  }
+  .content-title {
+    margin-top: 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 54px; font-weight: 800; line-height: 1.05;
+    letter-spacing: -2.2px; color: #FAFAFA;
+  }
+  .content-title em { color: #F9A8D4; font-style: normal; }
+  .content-divider {
+    margin-top: 24px; height: 4px; width: 72px;
+    background: #EC4899; border-radius: 2px;
+  }
+
+  /* Slide 2 — Antes vs Agora */
+  .compare {
+    margin-top: 38px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .compare-col {
+    padding: 30px; border-radius: 16px;
+    background: rgba(236,72,153,0.05);
+    border: 1px solid rgba(236,72,153,0.22);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .compare-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 2.5px;
+    color: #F9A8D4; text-transform: uppercase;
+  }
+  .compare-flow {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .compare-step {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px; font-weight: 600; color: #FAFAFA;
+    line-height: 1.25;
+  }
+  .compare-arrow {
+    color: #F9A8D4; font-size: 20px; font-weight: 800;
+  }
+
+  /* Slide 3 — Vulnerabilidades */
+  .vuln-list {
+    margin-top: 36px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .vuln-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border-radius: 14px;
+    background: rgba(251,191,36,0.05);
+    border: 1px solid rgba(251,191,36,0.22);
+  }
+  .vuln-icon {
+    flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(251,191,36,0.14);
+    border: 1px solid rgba(251,191,36,0.38);
+    color: #FBBF24;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px;
+  }
+  .vuln-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px; font-weight: 600; color: #FAFAFA;
+    line-height: 1.2;
+  }
+  .reframe {
+    margin-top: 32px;
+    padding: 20px 24px; border-radius: 16px;
+    background: rgba(236,72,153,0.10);
+    border: 1px solid rgba(236,72,153,0.36);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 21px; font-weight: 700; line-height: 1.35;
+    color: #FAFAFA;
+  }
+  .reframe em { color: #F9A8D4; font-style: normal; }
+
+  /* Slide 4 — Checklist */
+  .checklist {
+    margin-top: 36px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .check-item {
+    display: flex; align-items: center; gap: 18px;
+    padding: 14px 20px; border-radius: 14px;
+    background: rgba(236,72,153,0.05);
+    border: 1px solid rgba(236,72,153,0.22);
+  }
+  .check-mark {
+    flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(236,72,153,0.16);
+    border: 1px solid rgba(236,72,153,0.38);
+    color: #F9A8D4;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px;
+  }
+  .check-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 19px; font-weight: 600; color: #FAFAFA;
+    line-height: 1.2;
+  }
+
+  /* Slide 5 — Pergunta certa */
+  .questions {
+    margin-top: 38px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .q-card {
+    padding: 32px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.03);
+  }
+  .q-card.bad {
+    border-color: rgba(239,68,68,0.32);
+    background: rgba(239,68,68,0.05);
+  }
+  .q-card.good {
+    border-color: rgba(236,72,153,0.45);
+    background: rgba(236,72,153,0.10);
+  }
+  .q-label {
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .q-card.bad .q-label { color: #F87171; }
+  .q-card.good .q-label { color: #F9A8D4; }
+  .q-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px;
+  }
+  .q-card.bad .q-mark { background: rgba(239,68,68,0.18); border: 1px solid rgba(239,68,68,0.42); color: #F87171; }
+  .q-card.good .q-mark { background: rgba(236,72,153,0.20); border: 1px solid rgba(236,72,153,0.48); color: #F9A8D4; }
+  .q-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px; font-weight: 700; line-height: 1.25;
+    color: #FAFAFA;
+  }
+
+  /* CTA */
+  .cta {
+    background: radial-gradient(ellipse at top right, rgba(236,72,153,0.25), transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(139,92,246,0.14), transparent 55%),
+                #0A0F11;
+  }
+  .cta-body {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; gap: 30px;
+  }
+  .cta-logo { height: 68px; width: auto; }
+  .cta-bigtext {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 58px; font-weight: 900; line-height: 1.02;
+    letter-spacing: -2.4px; color: #FFF; max-width: 820px;
+  }
+  .cta-bigtext .cta-pink { color: #F9A8D4; display: block; }
+  .cta-handle-row {
+    display: inline-flex; align-items: center;
+    padding: 12px 26px; border-radius: 999px;
+    background: rgba(236,72,153,0.10);
+    border: 1px solid rgba(236,72,153,0.42);
+  }
+  .cta-handle {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.5px; color: #F9A8D4;
+  }
+  .cta-topics-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 15px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #71717A;
+  }
+  .cta-topics { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 820px; }
+  .topic-pill {
+    padding: 9px 20px; border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: #E5E7EB;
+    font-size: 17px; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute;">
+  <defs>
+    <symbol id="sparkles" viewBox="0 0 24 24">
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+      <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+    </symbol>
+    <symbol id="code" viewBox="0 0 24 24">
+      <path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/>
+    </symbol>
+    <symbol id="shield" viewBox="0 0 24 24">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+    </symbol>
+    <symbol id="alert" viewBox="0 0 24 24">
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </symbol>
+    <symbol id="arrow-right" viewBox="0 0 24 24">
+      <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- SLIDE 01 — Capa -->
+<div class="slide capa">
+  <div class="header">
+    <span class="badge"><svg><use href="#sparkles"/></svg> AI</span>
+    <span class="counter">01 / 04</span>
+  </div>
+  <div class="capa-main">
+    <div class="eyebrow">AI · Security</div>
+    <div class="main-title">IA acelera o código e as <span class="warn">vulnerabilidades</span> também.</div>
+    <div class="divider"></div>
+
+    <div class="capa-flow">
+      <div class="flow-box">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <div class="flow-label">Prompt</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <svg><use href="#sparkles"/></svg>
+        <div class="flow-label">IA + Código</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box warn-box">
+        <svg><use href="#alert"/></svg>
+        <div class="flow-label">Vulnerabilidade?</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">Arrasta pro lado <svg><use href="#arrow-right"/></svg></div>
+  </div>
+</div>
+
+<!-- SLIDE 02 — Cenário + Vulnerabilidades + reframe -->
+<div class="slide">
+  <div class="header">
+    <span class="badge"><svg><use href="#sparkles"/></svg> AI</span>
+    <span class="counter">02 / 04</span>
+  </div>
+  <div class="content-eyebrow">O que pode aparecer</div>
+  <div class="content-title">Algumas vulnerabilidades que IA <em>pode introduzir sem querer</em></div>
+  <div class="content-divider"></div>
+
+  <div class="vuln-list">
+    <div class="vuln-item"><div class="vuln-icon">!</div><div class="vuln-text">SQL injection</div></div>
+    <div class="vuln-item"><div class="vuln-icon">!</div><div class="vuln-text">Libs desatualizadas</div></div>
+    <div class="vuln-item"><div class="vuln-icon">!</div><div class="vuln-text">Dados sensíveis em logs</div></div>
+    <div class="vuln-item"><div class="vuln-icon">!</div><div class="vuln-text">Validações ignoradas</div></div>
+    <div class="vuln-item"><div class="vuln-icon">!</div><div class="vuln-text">Permissões frágeis</div></div>
+    <div class="vuln-item"><div class="vuln-icon">!</div><div class="vuln-text">Padrões inseguros copiados</div></div>
+  </div>
+
+  <div class="reframe">
+    O risco não está em <em>usar IA</em>. Está em <em>tratar o output como já revisado</em>.
+  </div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">Próximo <svg><use href="#arrow-right"/></svg></div>
+  </div>
+</div>
+
+<!-- SLIDE 03 — Checklist + pergunta certa (merge) -->
+<div class="slide">
+  <div class="header">
+    <span class="badge"><svg><use href="#sparkles"/></svg> AI</span>
+    <span class="counter">03 / 04</span>
+  </div>
+  <div class="content-eyebrow">O novo papel do dev</div>
+  <div class="content-title">Antes de aceitar código IA, <em>valide</em>:</div>
+  <div class="content-divider"></div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-mark">✓</div><div class="check-text">Lógica e regras de negócio</div></div>
+    <div class="check-item"><div class="check-mark">✓</div><div class="check-text">Permissões e controle de acesso</div></div>
+    <div class="check-item"><div class="check-mark">✓</div><div class="check-text">Dependências e versões</div></div>
+    <div class="check-item"><div class="check-mark">✓</div><div class="check-text">Dados expostos em logs e respostas</div></div>
+    <div class="check-item"><div class="check-mark">✓</div><div class="check-text">Testes (edge cases e casos de abuso)</div></div>
+    <div class="check-item"><div class="check-mark">✓</div><div class="check-text">Impacto em produção</div></div>
+  </div>
+  <div class="reframe" style="margin-top: 26px;">A pergunta deixou de ser <em>"a IA consegue gerar?"</em>. Virou <em>"eu consigo manter?"</em></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">Próximo <svg><use href="#arrow-right"/></svg></div>
+  </div>
+</div>
+
+<!-- SLIDE 04 — CTA -->
+<div class="slide cta">
+  <div class="header">
+    <span class="badge"><svg><use href="#sparkles"/></svg> AI</span>
+    <span class="counter">04 / 04</span>
+  </div>
+  <div class="cta-body">
+    <img class="cta-logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="cta-bigtext">Curtiu o post?<span class="cta-pink">Siga para ver mais.</span></div>
+    <div class="cta-handle-row"><span class="cta-handle">@pedroduarte.dev</span></div>
+    <div class="cta-topics-label">Toda semana sobre</div>
+    <div class="cta-topics">
+      <span class="topic-pill">News</span>
+      <span class="topic-pill">Concepts</span>
+      <span class="topic-pill">Code</span>
+      <span class="topic-pill">Architecture</span>
+      <span class="topic-pill">AI</span>
+      <span class="topic-pill">Career</span>
+      <span class="topic-pill">Tools</span>
+      <span class="topic-pill">DevOps</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
