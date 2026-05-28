@@ -228,3 +228,19 @@ marketing/conteudo/<slug>-<data>/
 - `postar-instagram.js` → lê `instagram/` + `legenda.md`
 - `postar-linkedin.js` → prefere `linkedin/` + `legenda-linkedin.md`, se não existirem cai pra `instagram/` + `legenda.md`
 - `postar-story.js` → lê `story.png`
+
+---
+
+## Slide CTA — tags ativas
+
+No último slide (CTA "Curtiu? Siga para ver mais.") a fileira de `topic-pill` mostra **apenas as tags que estamos publicando ativamente**. Mostrar 11 chips polui o slide e promete conteúdo que ainda não existe no feed.
+
+**Tags ativas hoje (maio 2026):**
+- News
+- Concepts
+- Architecture
+- AI
+
+**Quando incluir mais:** quando tiver pelo menos 2-3 publicações da tag no feed. À medida que Code, Career, Tools, Study, Security, DevOps, Opinion forem ganhando posts publicados, adicionar uma de cada vez na ordem em que entrarem em uso.
+
+**Onde alterar:** bloco `.cta-topics` dentro de `carrossel-insta.html` e `carrossel-linkedin.html` de cada peça nova.
