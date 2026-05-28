@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Story — Como escolher um banco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Geist+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #06060A; font-family: 'Inter', sans-serif; }
+
+  .story {
+    width: 1080px;
+    height: 1920px;
+    background: radial-gradient(ellipse 80% 60% at 50% 18%, rgba(139,92,246,0.26) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 40% at 30% 90%, rgba(99,102,241,0.14) 0%, transparent 60%),
+                #0A0F11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 170px 80px 200px;
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .story::before {
+    content: '';
+    position: absolute;
+    width: 1400px;
+    height: 1400px;
+    border-radius: 999px;
+    border: 1px solid rgba(139,92,246,0.20);
+    opacity: 0.55;
+    top: -350px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 18px; position: relative; z-index: 1;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 12px 24px; border-radius: 999px;
+    background: rgba(139,92,246,0.14);
+    border: 1px solid rgba(139,92,246,0.45);
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px; font-weight: 700; letter-spacing: 2.5px;
+    color: #C4B5FD; text-transform: uppercase;
+  }
+  .badge svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .handle {
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px; font-weight: 600; letter-spacing: 1.5px; color: #A1A1AA;
+  }
+
+  .eyebrow {
+    margin-top: 60px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 26px; font-weight: 700; letter-spacing: 4px;
+    color: #C4B5FD; text-transform: uppercase;
+    text-align: center; position: relative; z-index: 1;
+  }
+  .title {
+    margin-top: 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 96px; font-weight: 900; line-height: 1;
+    letter-spacing: -3px;
+    color: #FFFFFF; text-align: center;
+    max-width: 920px; position: relative; z-index: 1;
+  }
+  .title em { color: #C4B5FD; font-style: normal; }
+
+  .cards {
+    margin-top: 60px;
+    display: flex; flex-direction: column; gap: 16px;
+    width: 100%; max-width: 880px;
+    position: relative; z-index: 1;
+  }
+  .card {
+    display: flex; align-items: flex-start; gap: 22px;
+    padding: 26px 30px; border-radius: 16px;
+    background: rgba(139,92,246,0.06);
+    border: 1px solid rgba(139,92,246,0.24);
+  }
+  .num {
+    flex-shrink: 0;
+    width: 64px; height: 64px; border-radius: 12px;
+    background: rgba(139,92,246,0.18);
+    border: 1px solid rgba(139,92,246,0.40);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 24px; font-weight: 700; color: #C4B5FD;
+  }
+  .card-body { display: flex; flex-direction: column; gap: 5px; padding-top: 4px; }
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px; font-weight: 700; color: #FFFFFF;
+    line-height: 1.15;
+  }
+  .card-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 19px; font-weight: 500; color: #A1A1AA;
+    line-height: 1.4;
+  }
+
+  .hint {
+    margin-top: auto;
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px; font-weight: 500; letter-spacing: 1.5px;
+    color: #6B7280; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .hint-dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: #8B5CF6;
+  }
+</style>
+</head>
+<body>
+
+<div class="story">
+  <div class="head">
+    <div class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>
+        <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
+        <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
+      </svg>
+      Architecture
+    </div>
+    <div class="handle">@pedroduarte.dev</div>
+  </div>
+
+  <div class="eyebrow">Novo no feed</div>
+  <div class="title">Banco não se escolhe por <em>popularidade.</em></div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="num">01</div>
+      <div class="card-body">
+        <div class="card-title">Comece pelo modelo de dados</div>
+        <div class="card-sub">Relacional, documento, key-value ou grafo. A natureza do dado define o terreno.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <div class="card-body">
+        <div class="card-title">Pense em padrão de acesso</div>
+        <div class="card-sub">Como a aplicação lê e escreve revela o banco antes do hype.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <div class="card-body">
+        <div class="card-title">Vertical ou horizontal?</div>
+        <div class="card-sub">A pergunta não é só quanto cresce. É pra onde cresce.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">
+    <span class="hint-dot"></span>
+    Carrossel completo no feed
+    <span class="hint-dot"></span>
+  </div>
+</div>
+
+</body>
+</html>
