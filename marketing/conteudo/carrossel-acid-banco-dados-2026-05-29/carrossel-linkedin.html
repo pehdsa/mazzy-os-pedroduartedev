@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>ACID em bancos de dados — LinkedIn 1:1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #06060A; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  /* ============ Slide base 1:1 ============ */
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    background: radial-gradient(900px 800px at 0% 0%, rgba(6,182,212,0.22), transparent 65%),
+                radial-gradient(900px 800px at 100% 100%, rgba(34,211,238,0.10), transparent 65%),
+                #0A0F11;
+    border: 1px solid #1E2A2E;
+    padding: 72px;
+    color: #FAFAFA;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent, #FFFFFF 50%, transparent);
+    opacity: 0.04;
+    pointer-events: none;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* ============ Header ============ */
+  .header { display: flex; justify-content: space-between; align-items: center; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: 999px;
+    background: rgba(6, 182, 212, 0.13);
+    border: 1px solid rgba(6, 182, 212, 0.42);
+    font-family: 'Geist Mono', monospace;
+    font-size: 13px; font-weight: 700; letter-spacing: 1.8px;
+    color: #67E8F9; text-transform: uppercase;
+  }
+  .badge svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .counter {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px; font-weight: 500; letter-spacing: 1.3px; color: #71717A;
+  }
+
+  /* ============ Footer ============ */
+  .footer {
+    margin-top: auto;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer .logo { height: 32px; width: auto; }
+  .footer-cta {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 10px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.07); color: #FFF;
+    font-size: 14px; font-weight: 600;
+  }
+  .footer-cta svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ============ Slide 1 — Capa ============ */
+  .capa-main {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: flex-start; margin-top: 28px;
+  }
+  .capa .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 3.5px;
+    color: #67E8F9; text-transform: uppercase;
+  }
+  .capa .main-title {
+    margin-top: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 68px; font-weight: 900; line-height: 0.98;
+    letter-spacing: -2.2px; color: #FAFAFA;
+  }
+  .capa .main-title em { color: #67E8F9; font-style: normal; }
+  .capa .divider {
+    margin-top: 22px; height: 4px; width: 80px;
+    background: #06B6D4; border-radius: 2px;
+  }
+  .capa .subtitle {
+    margin-top: 22px;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px; font-weight: 500; line-height: 1.4;
+    color: #A1A1AA; max-width: 780px;
+  }
+  .capa-acid {
+    margin-top: 32px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  .acid-chip {
+    padding: 24px 12px; border-radius: 14px;
+    background: rgba(6, 182, 212, 0.07);
+    border: 1px solid rgba(6, 182, 212, 0.28);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .acid-chip .acid-letter {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 44px; font-weight: 900; color: #67E8F9; line-height: 1;
+    letter-spacing: -1.5px;
+  }
+  .acid-chip .acid-name {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.3px;
+    color: #71717A; text-transform: uppercase;
+  }
+  .capa-question {
+    margin-top: 24px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    padding: 20px 26px; border-radius: 14px;
+    background: rgba(6, 182, 212, 0.10);
+    border: 1px solid rgba(6, 182, 212, 0.32);
+  }
+  .capa-question .q-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px; font-weight: 700; color: #FAFAFA;
+  }
+  .capa-quote {
+    margin-top: 20px;
+    padding: 16px 20px; border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid #06B6D4;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px; font-weight: 500; line-height: 1.45;
+    color: #D4D4D8; font-style: italic;
+  }
+
+  /* ============ Conteúdo padrão (slides 2-7) ============ */
+  .content-eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 2.5px;
+    color: #67E8F9; text-transform: uppercase;
+    margin-top: 24px;
+  }
+  .content-title {
+    margin-top: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 54px; font-weight: 800; line-height: 1.02;
+    letter-spacing: -1.8px; color: #FAFAFA;
+  }
+  .content-title em { color: #67E8F9; font-style: normal; }
+  .content-divider {
+    margin-top: 18px; height: 3px; width: 60px;
+    background: #06B6D4; border-radius: 2px;
+  }
+  .reframe {
+    margin-top: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 19px; font-weight: 500; line-height: 1.45;
+    color: #A1A1AA; max-width: 820px;
+  }
+
+  /* ============ Header dos slides ACID (03-06) ============ */
+  .acid-header {
+    margin-top: 26px;
+    display: flex; align-items: center; gap: 22px;
+  }
+  .acid-letter-box {
+    flex-shrink: 0;
+    width: 110px; height: 110px; border-radius: 20px;
+    background: linear-gradient(180deg, rgba(6,182,212,0.18) 0%, rgba(6,182,212,0.06) 100%);
+    border: 1px solid rgba(6, 182, 212, 0.42);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 50px rgba(6,182,212,0.10);
+  }
+  .acid-letter-box .letter {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 80px; font-weight: 900; color: #67E8F9;
+    line-height: 1; letter-spacing: -3px;
+  }
+  .acid-info { display: flex; flex-direction: column; gap: 4px; }
+  .acid-info .acid-pt {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 52px; font-weight: 800; color: #FAFAFA;
+    line-height: 1; letter-spacing: -1.6px;
+  }
+  .acid-info .acid-en {
+    font-family: 'Geist Mono', monospace;
+    font-size: 15px; font-weight: 700; letter-spacing: 2.5px;
+    color: #67E8F9; text-transform: uppercase;
+  }
+  .acid-subtitle {
+    margin-top: 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px; font-weight: 700; line-height: 1.15;
+    color: #FAFAFA; letter-spacing: -0.9px;
+  }
+  .acid-subtitle em { color: #67E8F9; font-style: normal; }
+
+  /* ============ Slide 2 — O cenário ============ */
+  .cenario-list {
+    margin-top: 22px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .cenario-item {
+    display: flex; align-items: center; gap: 18px;
+    padding: 16px 22px; border-radius: 12px;
+    background: rgba(6, 182, 212, 0.06);
+    border: 1px solid rgba(6, 182, 212, 0.22);
+  }
+  .cenario-num {
+    flex-shrink: 0;
+    width: 36px; height: 36px; border-radius: 9px;
+    background: rgba(6, 182, 212, 0.20);
+    border: 1px solid rgba(6, 182, 212, 0.42);
+    color: #67E8F9;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-weight: 800; font-size: 15px;
+  }
+  .cenario-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px; font-weight: 600;
+    color: #E5E7EB;
+  }
+  .cenario-footer {
+    margin-top: 20px;
+    padding: 18px 24px; border-radius: 14px;
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.38);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 19px; font-weight: 700; line-height: 1.35;
+    color: #FAFAFA;
+  }
+  .cenario-footer em { color: #67E8F9; font-style: normal; }
+
+  /* ============ Slide 3 — Atomicidade ============ */
+  .atom-grid {
+    margin-top: 24px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .atom-col {
+    padding: 26px 22px; border-radius: 14px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 240px;
+  }
+  .atom-col.success {
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.32);
+  }
+  .atom-col.fail {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.28);
+  }
+  .atom-tag {
+    display: inline-flex; align-self: flex-start;
+    padding: 5px 12px; border-radius: 999px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .atom-tag.success {
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid rgba(16, 185, 129, 0.42);
+    color: #6EE7B7;
+  }
+  .atom-tag.fail {
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.42);
+    color: #F87171;
+  }
+  .atom-steps {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .atom-step {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px; font-weight: 500;
+    color: #E5E7EB;
+  }
+  .atom-step .check {
+    color: #6EE7B7; font-weight: 900; font-size: 17px;
+  }
+  .atom-step .cross {
+    color: #F87171; font-weight: 900; font-size: 17px;
+  }
+  .atom-step.muted { color: #71717A; }
+  .atom-result {
+    margin-top: auto;
+    padding: 12px 16px; border-radius: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px; font-weight: 700; letter-spacing: 1.5px;
+    text-align: center;
+  }
+  .atom-result.success {
+    background: rgba(16, 185, 129, 0.18);
+    color: #6EE7B7;
+  }
+  .atom-result.fail {
+    background: rgba(239, 68, 68, 0.18);
+    color: #F87171;
+  }
+  .atom-footer {
+    margin-top: 20px;
+    padding: 18px 22px; border-radius: 12px;
+    background: rgba(6, 182, 212, 0.10);
+    border: 1px solid rgba(6, 182, 212, 0.32);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 19px; font-weight: 700; line-height: 1.35;
+    color: #FAFAFA; text-align: center;
+  }
+  .atom-footer em { color: #67E8F9; font-style: normal; }
+
+  /* ============ Slide 4 — Consistência ============ */
+  .rules-grid {
+    margin-top: 22px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .rule-card {
+    padding: 22px 22px; border-radius: 14px;
+    background: rgba(6, 182, 212, 0.06);
+    border: 1px solid rgba(6, 182, 212, 0.24);
+    display: flex; flex-direction: column; gap: 8px;
+    min-height: 130px;
+  }
+  .rule-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px; font-weight: 800; color: #FAFAFA;
+    letter-spacing: -0.3px;
+  }
+  .rule-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px; font-weight: 500; line-height: 1.35;
+    color: #A1A1AA;
+  }
+  .rules-footer {
+    margin-top: 18px;
+    padding: 18px 22px; border-radius: 12px;
+    background: rgba(6, 182, 212, 0.10);
+    border: 1px solid rgba(6, 182, 212, 0.32);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 19px; font-weight: 700; line-height: 1.35;
+    color: #FAFAFA;
+  }
+  .rules-footer em { color: #67E8F9; font-style: normal; }
+
+  /* ============ Slide 5 — Isolamento ============ */
+  .iso-list {
+    margin-top: 22px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .iso-row {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 18px 22px; border-radius: 12px;
+    background: rgba(6, 182, 212, 0.06);
+    border: 1px solid rgba(6, 182, 212, 0.22);
+  }
+  .iso-icon {
+    flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.40);
+    color: #F87171;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 18px;
+  }
+  .iso-body {
+    display: flex; flex-direction: column; gap: 4px; padding-top: 2px;
+  }
+  .iso-name {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 1.2px;
+    color: #67E8F9; text-transform: uppercase;
+  }
+  .iso-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px; font-weight: 500; line-height: 1.3;
+    color: #E5E7EB;
+  }
+  .iso-levels-label {
+    margin-top: 24px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 1.8px;
+    color: #71717A; text-transform: uppercase;
+  }
+  .iso-levels {
+    margin-top: 12px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .iso-level {
+    padding: 10px 20px; border-radius: 999px;
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.42);
+    font-family: 'Geist Mono', monospace;
+    font-size: 15px; font-weight: 700; color: #FAFAFA;
+    letter-spacing: 0.7px;
+  }
+
+  /* ============ Slide 6 — Durabilidade ============ */
+  .dura-grid {
+    margin-top: 22px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .dura-card {
+    padding: 22px 22px; border-radius: 14px;
+    background: rgba(6, 182, 212, 0.06);
+    border: 1px solid rgba(6, 182, 212, 0.24);
+    display: flex; flex-direction: column; gap: 8px;
+    min-height: 130px;
+  }
+  .dura-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px; font-weight: 800; color: #FAFAFA;
+    letter-spacing: -0.3px;
+  }
+  .dura-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px; font-weight: 500; line-height: 1.4;
+    color: #A1A1AA;
+  }
+  .dura-footer {
+    margin-top: 18px;
+    padding: 18px 22px; border-radius: 12px;
+    background: rgba(6, 182, 212, 0.10);
+    border: 1px solid rgba(6, 182, 212, 0.32);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 19px; font-weight: 700; line-height: 1.35;
+    color: #FAFAFA;
+  }
+  .dura-footer em { color: #67E8F9; font-style: normal; }
+
+  /* ============ Slide 7 — Por que importa ============ */
+  .why-list {
+    margin-top: 22px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .why-step {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 22px; border-radius: 12px;
+    background: rgba(6, 182, 212, 0.05);
+    border: 1px solid rgba(6, 182, 212, 0.20);
+  }
+  .why-num {
+    flex-shrink: 0;
+    font-family: 'Geist Mono', monospace;
+    font-size: 15px; font-weight: 700; color: #67E8F9;
+    width: 28px;
+  }
+  .why-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 19px; font-weight: 600;
+    color: #E5E7EB;
+  }
+  .why-quote {
+    margin-top: 20px;
+    padding: 22px 26px; border-radius: 14px;
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.38);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px; font-weight: 700; line-height: 1.3;
+    color: #FAFAFA;
+  }
+  .why-quote em { color: #67E8F9; font-style: normal; }
+
+  /* ============ Slide 8 — CTA ============ */
+  .cta {
+    background: radial-gradient(ellipse at top right, rgba(6,182,212,0.25), transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(34,211,238,0.14), transparent 55%),
+                #0A0F11;
+  }
+  .cta-body {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center; gap: 22px;
+  }
+  .cta-logo { height: 60px; width: auto; }
+  .cta-bigtext {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 56px; font-weight: 900; line-height: 1.02;
+    letter-spacing: -1.8px; color: #FFFFFF; max-width: 760px;
+  }
+  .cta-bigtext .cta-accent { color: #67E8F9; display: block; }
+  .cta-handle-row {
+    display: inline-flex; align-items: center;
+    padding: 10px 22px; border-radius: 999px;
+    background: rgba(6, 182, 212, 0.10);
+    border: 1px solid rgba(6, 182, 212, 0.42);
+  }
+  .cta-handle {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.4px; color: #67E8F9;
+  }
+  .cta-topics-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 13px; font-weight: 700; letter-spacing: 2.2px;
+    text-transform: uppercase; color: #71717A;
+  }
+  .cta-topics {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px;
+  }
+  .topic-pill {
+    padding: 7px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: #E5E7EB;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 01 — Capa -->
+<div class="slide capa">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">01 / 08</span>
+  </div>
+
+  <div class="capa-main">
+    <div class="eyebrow">Concepts · Database</div>
+    <div class="main-title">ACID. Sem isso, <em>dado vira aposta</em>.</div>
+    <div class="divider"></div>
+    <div class="subtitle">O que sustenta toda transação confiável em um banco de dados.</div>
+
+    <div class="capa-acid">
+      <div class="acid-chip">
+        <div class="acid-letter">A</div>
+        <div class="acid-name">Atomicidade</div>
+      </div>
+      <div class="acid-chip">
+        <div class="acid-letter">C</div>
+        <div class="acid-name">Consistência</div>
+      </div>
+      <div class="acid-chip">
+        <div class="acid-letter">I</div>
+        <div class="acid-name">Isolamento</div>
+      </div>
+      <div class="acid-chip">
+        <div class="acid-letter">D</div>
+        <div class="acid-name">Durabilidade</div>
+      </div>
+    </div>
+
+    <div class="capa-question">
+      <div class="q-text">As 4 garantias por trás de toda transação</div>
+    </div>
+
+    <div class="capa-quote">"Sistema sem garantia é sistema esperando o próximo bug aparecer."</div>
+  </div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Arrasta pro lado
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 02 — O cenário -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">02 / 08</span>
+  </div>
+
+  <div class="content-eyebrow">01 · O cenário</div>
+  <div class="content-title">Sua aplicação raramente faz <em>uma coisa só</em></div>
+  <div class="content-divider"></div>
+
+  <div class="reframe">Quando você processa um pedido, várias operações precisam acontecer juntas.</div>
+
+  <div class="cenario-list">
+    <div class="cenario-item">
+      <div class="cenario-num">01</div>
+      <div class="cenario-text">Criar o pedido</div>
+    </div>
+    <div class="cenario-item">
+      <div class="cenario-num">02</div>
+      <div class="cenario-text">Atualizar o estoque</div>
+    </div>
+    <div class="cenario-item">
+      <div class="cenario-num">03</div>
+      <div class="cenario-text">Registrar o pagamento</div>
+    </div>
+    <div class="cenario-item">
+      <div class="cenario-num">04</div>
+      <div class="cenario-text">Gravar log de auditoria</div>
+    </div>
+    <div class="cenario-item">
+      <div class="cenario-num">05</div>
+      <div class="cenario-text">Mudar o status da conta</div>
+    </div>
+  </div>
+
+  <div class="cenario-footer">Esse conjunto precisa ser tratado como uma <em>unidade lógica</em>. É o que chamamos de <em>transação</em>.</div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 03 — Atomicidade -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">03 / 08</span>
+  </div>
+
+  <div class="acid-header">
+    <div class="acid-letter-box"><div class="letter">A</div></div>
+    <div class="acid-info">
+      <div class="acid-pt">Atomicidade</div>
+      <div class="acid-en">Atomicity</div>
+    </div>
+  </div>
+
+  <div class="acid-subtitle">Tudo, ou <em>nada</em>.</div>
+
+  <div class="reframe">Exemplo: transferência bancária entre as contas A e B.</div>
+
+  <div class="atom-grid">
+    <div class="atom-col success">
+      <div class="atom-tag success">Sucesso</div>
+      <div class="atom-steps">
+        <div class="atom-step"><span class="check">✓</span> Debitar R$ 100 de A</div>
+        <div class="atom-step"><span class="check">✓</span> Creditar R$ 100 em B</div>
+      </div>
+      <div class="atom-result success">COMMIT</div>
+    </div>
+    <div class="atom-col fail">
+      <div class="atom-tag fail">Falha no meio</div>
+      <div class="atom-steps">
+        <div class="atom-step"><span class="check">✓</span> Debitar R$ 100 de A</div>
+        <div class="atom-step muted"><span class="cross">✗</span> Falha ao creditar em B</div>
+      </div>
+      <div class="atom-result fail">ROLLBACK</div>
+    </div>
+  </div>
+
+  <div class="atom-footer">Se algo falha, <em>tudo é desfeito</em>. O banco nunca fica em estado inconsistente.</div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 04 — Consistência -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">04 / 08</span>
+  </div>
+
+  <div class="acid-header">
+    <div class="acid-letter-box"><div class="letter">C</div></div>
+    <div class="acid-info">
+      <div class="acid-pt">Consistência</div>
+      <div class="acid-en">Consistency</div>
+    </div>
+  </div>
+
+  <div class="acid-subtitle">A transação respeita <em>as regras</em> do banco.</div>
+
+  <div class="reframe">Toda operação tem que obedecer o que o schema define. Se violar uma regra, a transação falha.</div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-name">Constraints</div>
+      <div class="rule-desc">NOT NULL, CHECK, UNIQUE e regras de domínio</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-name">Chaves estrangeiras</div>
+      <div class="rule-desc">Referências válidas entre tabelas</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-name">Tipos de dados</div>
+      <div class="rule-desc">Cada coluna aceita só o que foi definido</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-name">Integridade</div>
+      <div class="rule-desc">Triggers, regras de negócio e validações</div>
+    </div>
+  </div>
+
+  <div class="rules-footer">Sai de um estado <em>válido</em>. Vai para outro estado <em>válido</em>.</div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 05 — Isolamento -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">05 / 08</span>
+  </div>
+
+  <div class="acid-header">
+    <div class="acid-letter-box"><div class="letter">I</div></div>
+    <div class="acid-info">
+      <div class="acid-pt">Isolamento</div>
+      <div class="acid-en">Isolation</div>
+    </div>
+  </div>
+
+  <div class="acid-subtitle">Muitas transações juntas, <em>sem se atrapalhar</em>.</div>
+
+  <div class="reframe">Sem isolamento adequado, surgem problemas clássicos de concorrência:</div>
+
+  <div class="iso-list">
+    <div class="iso-row">
+      <div class="iso-icon">✕</div>
+      <div class="iso-body">
+        <div class="iso-name">Dirty read</div>
+        <div class="iso-desc">Sua transação lê dados que outra ainda não confirmou</div>
+      </div>
+    </div>
+    <div class="iso-row">
+      <div class="iso-icon">✕</div>
+      <div class="iso-body">
+        <div class="iso-name">Lost update</div>
+        <div class="iso-desc">Duas transações atualizam o mesmo dado e uma sobrescreve a outra</div>
+      </div>
+    </div>
+    <div class="iso-row">
+      <div class="iso-icon">✕</div>
+      <div class="iso-body">
+        <div class="iso-name">Non-repeatable read</div>
+        <div class="iso-desc">Mesma query, resultado diferente dentro da mesma transação</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="iso-levels-label">Níveis de isolamento</div>
+  <div class="iso-levels">
+    <span class="iso-level">READ COMMITTED</span>
+    <span class="iso-level">REPEATABLE READ</span>
+    <span class="iso-level">SERIALIZABLE</span>
+  </div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 06 — Durabilidade -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">06 / 08</span>
+  </div>
+
+  <div class="acid-header">
+    <div class="acid-letter-box"><div class="letter">D</div></div>
+    <div class="acid-info">
+      <div class="acid-pt">Durabilidade</div>
+      <div class="acid-en">Durability</div>
+    </div>
+  </div>
+
+  <div class="acid-subtitle">COMMIT é <em>COMMIT</em>. Não some.</div>
+
+  <div class="reframe">Depois do commit, o dado precisa sobreviver a queda de servidor, falta de energia e crash do processo.</div>
+
+  <div class="dura-grid">
+    <div class="dura-card">
+      <div class="dura-name">WAL</div>
+      <div class="dura-desc">Write-Ahead Log grava a operação antes de aplicar de fato</div>
+    </div>
+    <div class="dura-card">
+      <div class="dura-name">Logs de transação</div>
+      <div class="dura-desc">Histórico persistente do que foi feito e em que ordem</div>
+    </div>
+    <div class="dura-card">
+      <div class="dura-name">Escrita em disco</div>
+      <div class="dura-desc">fsync força o dado a sair da memória pro storage</div>
+    </div>
+    <div class="dura-card">
+      <div class="dura-name">Recovery</div>
+      <div class="dura-desc">Ao reiniciar, o banco reaplica o log e volta ao estado válido</div>
+    </div>
+  </div>
+
+  <div class="dura-footer">Servidor caiu? Os dados confirmados <em>continuam lá</em>.</div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Próximo
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 07 — Por que importa -->
+<div class="slide">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">07 / 08</span>
+  </div>
+
+  <div class="content-eyebrow">06 · No mundo real</div>
+  <div class="content-title">Sistemas críticos não toleram <em>estado quebrado</em></div>
+  <div class="content-divider"></div>
+
+  <div class="reframe">Uma compra simples num e-commerce envolve várias etapas dependentes:</div>
+
+  <div class="why-list">
+    <div class="why-step">
+      <div class="why-num">01</div>
+      <div class="why-text">Criar o pedido</div>
+    </div>
+    <div class="why-step">
+      <div class="why-num">02</div>
+      <div class="why-text">Reservar estoque</div>
+    </div>
+    <div class="why-step">
+      <div class="why-num">03</div>
+      <div class="why-text">Registrar pagamento</div>
+    </div>
+    <div class="why-step">
+      <div class="why-num">04</div>
+      <div class="why-text">Gerar nota fiscal</div>
+    </div>
+    <div class="why-step">
+      <div class="why-num">05</div>
+      <div class="why-text">Atualizar status da entrega</div>
+    </div>
+  </div>
+
+  <div class="why-quote">Se uma etapa falha, talvez nenhuma deva valer. <em>ACID é o que garante isso.</em></div>
+
+  <div class="footer">
+    <img class="logo" src="./logo.svg" alt="pedroduarte.dev">
+    <div class="footer-cta">
+      Final
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 08 — CTA -->
+<div class="slide cta">
+  <div class="header">
+    <span class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </span>
+    <span class="counter">08 / 08</span>
+  </div>
+
+  <div class="cta-body">
+    <img class="cta-logo" src="./logo.svg" alt="pedroduarte.dev">
+
+    <div class="cta-bigtext">
+      Curtiu o post?
+      <span class="cta-accent">Siga para ver mais.</span>
+    </div>
+
+    <div class="cta-handle-row">
+      <span class="cta-handle">@pedroduarte.dev</span>
+    </div>
+
+    <div class="cta-topics-label">Toda semana sobre</div>
+    <div class="cta-topics">
+      <span class="topic-pill">News</span>
+      <span class="topic-pill">Concepts</span>
+      <span class="topic-pill">Architecture</span>
+      <span class="topic-pill">AI</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

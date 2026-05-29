@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Story — ACID em bancos de dados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Geist+Mono:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #06060A; font-family: 'Inter', sans-serif; }
+
+  .story {
+    width: 1080px;
+    height: 1920px;
+    background: radial-gradient(ellipse 80% 60% at 50% 18%, rgba(6,182,212,0.26) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 40% at 30% 90%, rgba(34,211,238,0.14) 0%, transparent 60%),
+                #0A0F11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 170px 80px 200px;
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .story::before {
+    content: '';
+    position: absolute;
+    width: 1400px;
+    height: 1400px;
+    border-radius: 999px;
+    border: 1px solid rgba(6,182,212,0.20);
+    opacity: 0.55;
+    top: -350px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 18px; position: relative; z-index: 1;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 12px 24px; border-radius: 999px;
+    background: rgba(6,182,212,0.14);
+    border: 1px solid rgba(6,182,212,0.45);
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px; font-weight: 700; letter-spacing: 2.5px;
+    color: #67E8F9; text-transform: uppercase;
+  }
+  .badge svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .handle {
+    font-family: 'Geist Mono', monospace;
+    font-size: 22px; font-weight: 600; letter-spacing: 1.5px; color: #A1A1AA;
+  }
+
+  .eyebrow {
+    margin-top: 60px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 26px; font-weight: 700; letter-spacing: 4px;
+    color: #67E8F9; text-transform: uppercase;
+    text-align: center; position: relative; z-index: 1;
+  }
+  .title {
+    margin-top: 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 96px; font-weight: 900; line-height: 1;
+    letter-spacing: -3px;
+    color: #FFFFFF; text-align: center;
+    max-width: 920px; position: relative; z-index: 1;
+  }
+  .title em { color: #67E8F9; font-style: normal; }
+
+  .cards {
+    margin-top: 70px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px;
+    width: 100%; max-width: 880px;
+    position: relative; z-index: 1;
+  }
+  .card {
+    padding: 36px 28px; border-radius: 20px;
+    background: rgba(6,182,212,0.06);
+    border: 1px solid rgba(6,182,212,0.30);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .card .letter {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 92px; font-weight: 900; color: #67E8F9; line-height: 1;
+    letter-spacing: -3px;
+  }
+  .card .name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 32px; font-weight: 800; color: #FFFFFF;
+  }
+  .card .en {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px; font-weight: 700; letter-spacing: 2px;
+    color: #71717A; text-transform: uppercase;
+  }
+
+  .hint {
+    margin-top: auto;
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 20px; font-weight: 500; letter-spacing: 1.5px;
+    color: #6B7280; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .hint-dot {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: #06B6D4;
+  }
+</style>
+</head>
+<body>
+
+<div class="story">
+  <div class="head">
+    <div class="badge">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+        <path d="M9 18h6"/>
+        <path d="M10 22h4"/>
+      </svg>
+      Concepts
+    </div>
+    <div class="handle">@pedroduarte.dev</div>
+  </div>
+
+  <div class="eyebrow">Novo no feed</div>
+  <div class="title">ACID. Sem isso, <em>dado vira aposta.</em></div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="letter">A</div>
+      <div class="name">Atomicidade</div>
+      <div class="en">Atomicity</div>
+    </div>
+    <div class="card">
+      <div class="letter">C</div>
+      <div class="name">Consistência</div>
+      <div class="en">Consistency</div>
+    </div>
+    <div class="card">
+      <div class="letter">I</div>
+      <div class="name">Isolamento</div>
+      <div class="en">Isolation</div>
+    </div>
+    <div class="card">
+      <div class="letter">D</div>
+      <div class="name">Durabilidade</div>
+      <div class="en">Durability</div>
+    </div>
+  </div>
+
+  <div class="hint">
+    <span class="hint-dot"></span>
+    Carrossel completo no feed
+    <span class="hint-dot"></span>
+  </div>
+</div>
+
+</body>
+</html>
